@@ -5,7 +5,7 @@ import { Grid, withStyles, Button, ButtonGroup } from "@material-ui/core";
 
 const styles = (theme) => ({});
 
-const ConfirmButtonGroup = ({ classes, ...props }) => {
+const Confirm = ({ classes, ...props }) => {
 	const handleClickConfirmInvite = (isConfirmed) => {
 		if (isConfirmed) {
 			props.confirmInvite(props.guest.id);
@@ -86,4 +86,4 @@ const mapActionToProps = {
 export default connect(
 	mapStateToProps,
 	mapActionToProps
-)(withStyles(styles)(ConfirmButtonGroup));
+)(withStyles(styles)(Confirm));

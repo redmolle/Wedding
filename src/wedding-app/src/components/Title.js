@@ -13,7 +13,7 @@ const styles = (theme) => ({
 	},
 });
 
-const InviteTitle = ({ classes, ...props }) => {
+const Title = ({ classes, ...props }) => {
 	return (
         <Typography variant="h4" gutterBottom>
             {props.guest.name}
@@ -31,4 +31,4 @@ const mapActionToProps = {
 export default connect(
 	mapStateToProps,
 	mapActionToProps
-)(withStyles(styles)(InviteTitle));
+)(withStyles(styles)(Title));

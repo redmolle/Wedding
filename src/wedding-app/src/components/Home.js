@@ -6,8 +6,8 @@ import { Grid, Paper, withStyles } from "@material-ui/core";
 import bg from "../background.png";
 import Menu from "./Menu";
 import Timer from "./Timer";
-import InviteTitle from "./InviteTitle";
-import ConfirmInvite from "./ConfirmInvite";
+import Title from "./Title";
+import Confirm from "./Confirm";
 import NavigationMap from "./NavigationMap";
 
 const styles = (theme) => ({
@@ -52,10 +52,10 @@ const Home = ({ classes, ...props }) => {
 				{props.guest && props.guest.id ? (
 					<Grid container direction='column' justify='center'>
 						<Grid item xs={12} align='center'>
-							<InviteTitle />
+							<Title />
 						</Grid>
 						<Grid item xs={12} align='center'>
-							<ConfirmInvite />
+							<Confirm />
 						</Grid>
 					</Grid>
 				) : (
