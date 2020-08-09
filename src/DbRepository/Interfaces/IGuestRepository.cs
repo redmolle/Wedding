@@ -10,8 +10,8 @@ namespace DbRepository.Interfaces
     {
         Task<Guest> Get(Guid id);
 
-        Task<bool> ConfirmInvite(Guid id);
+        Task<bool> ConfirmInvite(Guid id, bool? isConfirmed);
 
-        Task<bool> ConfirmZAGS(Guid id);
+        Task<bool> ConfirmZAGS(Guid id, bool? isConfirmed);
     }
 }

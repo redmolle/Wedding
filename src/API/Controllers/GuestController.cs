@@ -36,10 +36,22 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> ConfirmInvite(Guid id)
         {
-            var isUpdated = await _guestRepository.ConfirmInvite(id);
+            var isUpdated = await ConfirmInvite(id, true);
             if (!isUpdated)
             {
                 return BadRequest(new HttpErrorMessage("Ошибка при подтвеждении"));
+            }
+            return NoContent();
+        }
+
+        [Route("refuseInvite/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> RefuseInvite(Guid id)
+        {
+            var isUpdated = await ConfirmInvite(id, false);
+            if (!isUpdated)
+            {
+                return BadRequest(new HttpErrorMessage("Ошибка при отклонении"));
             }
             return NoContent();
         }
@@ -48,12 +60,38 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> ConfirmZAGS(Guid id)
         {
-            var isUpdated = await _guestRepository.ConfirmZAGS(id);
+            var isUpdated = await _guestRepository.ConfirmZAGS(id, true);
             if (!isUpdated)
             {
                 return BadRequest(new HttpErrorMessage("Ошибка при подтвеждении"));
             }
             return NoContent();
+        }
+
+        [Route("refuseZAGS/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> RefuseZAGS(Guid id)
+        {
+            var isUpdated = await _guestRepository.ConfirmZAGS(id, false);
+            if (!isUpdated)
+            {
+                return BadRequest(new HttpErrorMessage("Ошибка при подтвеждении"));
+            }
+            return NoContent();
+        }
+
+
+        private async Task<bool> ConfirmInvite(Guid id, bool isConfirmed)
+        {
+            var isUpdated = await _guestRepository.ConfirmInvite(id, isConfirmed);
+
+            return !isUpdated ? false : true;
+        }
+        private async Task<bool> ConfirmZAGS(Guid id, bool isConfirmed)
+        {
+            var isUpdated = await _guestRepository.ConfirmZAGS(id, isConfirmed);
+
+            return !isUpdated ? false : true;
         }
     }
 }

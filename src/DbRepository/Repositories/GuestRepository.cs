@@ -14,7 +14,7 @@ namespace DbRepository.Repositories
         public GuestRepository(AppSettings settings, IRepositoryContextFactory contextFactory)
             : base(settings, contextFactory) { }
 
-        public async Task<bool> ConfirmInvite(Guid id)
+        public async Task<bool> ConfirmInvite(Guid id, bool? isConfirmed)
         {
             using (var context = CreateDbContext())
             {
@@ -23,13 +23,13 @@ namespace DbRepository.Repositories
                 {
                     return false;
                 }
-                guest.IsConfirmed = true;
+                guest.IsConfirmed = isConfirmed ?? !guest.IsConfirmed;
                 await context.SaveChangesAsync();
                 return true;
             }
         }
 
-        public async Task<bool> ConfirmZAGS(Guid id)
+        public async Task<bool> ConfirmZAGS(Guid id, bool? isConfirmed)
         {
             using (var context = CreateDbContext())
             {
@@ -38,7 +38,7 @@ namespace DbRepository.Repositories
                 {
                     return false;
                 }
-                guest.IsConfirmedZAGS = true;
+                guest.IsConfirmedZAGS = isConfirmed ?? !guest.IsConfirmed;
                 await context.SaveChangesAsync();
                 return true;
             }

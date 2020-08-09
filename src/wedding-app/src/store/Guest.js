@@ -3,7 +3,9 @@ import api from "../actions/api";
 export const GUEST_ACTION_TYPE = {
 	GET: "GUEST_GET",
 	CONFIRM_INVITE: "GUEST_CONFIRM_INVITE",
+	REFUSE_INVITE: "GUEST_REFUSE_INVITE",
 	CONFIRM_ZAGS: "GUEST_CONFIRM_ZAGS",
+	REFUSE_ZAGS: "GUEST_REFUSE_ZAGS",
 };
 
 export const actionCreators = {
@@ -32,6 +34,18 @@ export const actionCreators = {
 			.catch((error) => console.log(error));
 	},
 
+	refuseInvite: (id) => (dispatch) => {
+		api
+			.Guest()
+			.refuseInvite(id)
+			.then((response) => {
+				dispatch({
+					type: GUEST_ACTION_TYPE.REFUSE_INVITE,
+				});
+			})
+			.catch((error) => console.log(error));
+	},
+
 	confirmZAGS: (id) => (dispatch) => {
 		api
 			.Guest()
@@ -39,6 +53,18 @@ export const actionCreators = {
 			.then((response) => {
 				dispatch({
 					type: GUEST_ACTION_TYPE.CONFIRM_ZAGS,
+				});
+			})
+			.catch((error) => console.log(error));
+	},
+
+	refuseZAGS: (id) => (dispatch) => {
+		api
+			.Guest()
+			.refuseZags(id)
+			.then((response) => {
+				dispatch({
+					type: GUEST_ACTION_TYPE.REFUSE_ZAGS,
 				});
 			})
 			.catch((error) => console.log(error));
