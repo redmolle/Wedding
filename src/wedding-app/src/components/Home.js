@@ -1,92 +1,44 @@
-import React, { useEffect } from "react";
-import { Home } from "./WrongLink";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import * as GuestActions from "../store/Guest";
-import { Grid, Paper, withStyles } from "@material-ui/core";
+import { Grid, Paper, makeStyles } from "@material-ui/core";
 import bg from "../background.png";
-import Menu from "./Menu";
-import Timer from "./Timer";
-import Title from "./Title";
-import Confirm from "./Confirm";
-import NavigationMap from "./NavigationMap";
+import NotFound from "./NotFound";
+import Invite from "./Invite";
 
-const styles = (theme) => ({
-	root: {
-		"& .MuiTableCell-head": {
-			fontSize: "1.25rem",
-		},
-		".MuiTableHead-root": {
-			width: "100%",
-		},
-		backgroundImage: `url(${bg})`,
-		backgroundSize: "cover",
-		backgroundPosition: "center center",
+const useStyle = makeStyles((theme) => ({
+	paper: {
+        backgroundImage: `url(${bg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center center",
 		backgroundRepeat: "no-repeat",
-	},
-});
+        margin: theme.spacing(2),
+        padding: theme.spacing(2)
+    }
+}))
 
-const ZAGSPlaceMark = {
-	geometry: [55.737322, 37.625191],
-	properties: {
-		hintContent: "Это ЗАГС",
-	},
-	modules: ["geoObject.addon.balloon", "geoObject.addon.hint"],
-};
-
-const RestaurantPlaceMark = {
-	geometry: [55.711001, 37.795889],
-	properties: {
-		hintContent: "Это ресторан",
-	},
-	modules: ["geoObject.addon.balloon", "geoObject.addon.hint"],
-};
-
-const Home = ({ classes, ...props }) => {
+const Home = (props) => {
+    const classes = useStyle();
+	
 	const guestId = props.match.params.guestId;
 
-	props.getGuest(guestId);
+    useEffect(() => {
+            props.getGuest(guestId);
+	}, [guestId]);
 
-	return (
-		<Paper classes={classes} elevation={3}>
-			<Grid container justify='center'>
-				{props.guest && props.guest.id ? (
-					<Grid container direction='column' justify='center'>
-						<Grid item xs={12} align='center'>
-							<Title />
-						</Grid>
-						<Grid item xs={12} align='center'>
-							<Confirm />
-						</Grid>
-					</Grid>
-				) : (
-					<WrongLink />
-				)}
-
-				<Grid item xs={12}>
-					<Timer eventDate={"2020-10-10"} />
-				</Grid>
-
-				<Grid item xs={12}>
-					<Grid container justify='center'>
-						<Grid item xs={6} align='center'>
-							<NavigationMap placemark={ZAGSPlaceMark} />
-						</Grid>
-						<Grid item xs={6} align='center'>
-							<NavigationMap placemark={RestaurantPlaceMark} />
-						</Grid>
-					</Grid>
-				</Grid>
-
-				<Grid item xs={12} align='center'>
-					<Menu/>
-				</Grid>
-			</Grid>
-		</Paper>
-	);
+    return (
+        <Paper className={classes.paper}>
+            {props.guest && props.guest.id ? (
+                <Invite />
+            ) : (
+                <NotFound/>
+            )}
+        </Paper>
+    );
 };
 
 const mapStateToProps = (state) => ({
-	guest: state.guest.guest,
+	guest: state.guest.data,
 });
 
 const mapActionToProps = {
@@ -96,4 +48,4 @@ const mapActionToProps = {
 export default connect(
 	mapStateToProps,
 	mapActionToProps
-)(withStyles(styles)(Home));
+)(Home);

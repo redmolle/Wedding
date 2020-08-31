@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
+using API.Services.Implementation;
+using API.Services.Interfaces;
 using DbRepository.Factories;
 using DbRepository.Interfaces;
 using DbRepository.Repositories;
@@ -38,9 +41,13 @@ namespace API
                     });
 
             services.AddScoped<IRepositoryContextFactory, RepositoryContextFactory>();
-            services.AddScoped<IGuestRepository>(provider => new GuestRepository(AppSettings, provider.GetService<IRepositoryContextFactory>()));
-            services.AddScoped<IMenuRepository>(provider => new MenuRepository(AppSettings, provider.GetService<IRepositoryContextFactory>()));
             services.AddScoped<ICategoryRepository>(provider => new CategoryRepository(AppSettings, provider.GetService<IRepositoryContextFactory>()));
+            services.AddScoped<IDishRepository>(provider => new DishRepository(AppSettings, provider.GetService<IRepositoryContextFactory>()));
+            services.AddScoped<IGuestRepository>(provider => new GuestRepository(AppSettings, provider.GetService<IRepositoryContextFactory>()));
+            services.AddScoped<IMealRepository>(provider => new MealRepository(AppSettings, provider.GetService<IRepositoryContextFactory>()));
+            services.AddScoped<IGuestService, GuestService>();
+            services.AddScoped<IMenuService, MenuService>();
+            services.AddHttpClient();
 
             services.AddCors();
         }

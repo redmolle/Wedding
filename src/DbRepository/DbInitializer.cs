@@ -15,43 +15,66 @@ namespace DbRepository
         {
             await context.Database.MigrateAsync();
 
-            if (!await context.Guest.AnyAsync())
+            var categories = await context.Category.ToListAsync();
+
+            appSettings.Categories.ForEach(category =>
             {
-                await context.Category.ForEachAsync(c => context.Category.Remove(c));
-                appSettings.Categories.ForEach(c => context.Category.Add(c));
-                await context.SaveChangesAsync();
-
-                var randomCategory = await context.Category.FirstOrDefaultAsync();
-
-                await context.Item.ForEachAsync(i => context.Item.Remove(i));
-                appSettings.Items.ForEach(i =>
+                if (!categories.Any(c => c.Name == category.Name))
                 {
-                    i.Category = randomCategory;
-                    context.Item.Add(i);
-                });
-                await context.SaveChangesAsync();
-
-                await context.Guest.ForEachAsync(g => context.Guest.Remove(g));
-                appSettings.Persons.ForEach(g => context.Guest.Add(g));
-                await context.SaveChangesAsync();
-
-                await context.Menu.ForEachAsync(m => context.Menu.Remove(m));
-                var guestList = await context.Guest.ToListAsync();
-                var itemList = await context.Item.ToListAsync();
-                foreach (var guest in guestList)
-                {
-                    foreach (var item in itemList)
-                    {
-                        context.Menu.Add(new MenuItem
-                        {
-                            GuestId = guest.Id,
-                            ItemId = item.Id,
-                            IsChoosed = false,
-                        });
-                    }
+                    context.Category.Add(category);
                 }
-                await context.SaveChangesAsync();
-            }
+            });
+            await context.SaveChangesAsync();
+
+            categories = await context.Category.ToListAsync();
+
+            var dishes = await context.Dish.ToListAsync();
+
+            appSettings.Dishes.ForEach(dish =>
+            {
+                if (!dishes.Any(d => d.Name == dish.Name))
+                {
+                    context.Dish.Add(new Dish
+                    {
+                        Name = dish.Name,
+                        CategoryId = categories.First(c => c.Name == dish.Category.Name).Id
+                    });
+                }
+            });
+            await context.SaveChangesAsync();
+
+            dishes = await context.Dish.ToListAsync();
+
+            var guests = await context.Guest.ToListAsync();
+
+            appSettings.Guests.ForEach(guest =>
+            {
+                if (!guests.Any(g => g.Name == guest.Name))
+                {
+                    context.Guest.Add(guest);
+                }
+            });
+            await context.SaveChangesAsync();
+
+            guests = await context.Guest.ToListAsync();
+
+            var meals = await context.Meal.ToListAsync();
+
+            guests.ForEach(g =>
+            {
+                dishes.ForEach(d =>
+                {
+                    if (!meals.Any(m => m.GuestId == g.Id && m.DishId == d.Id))
+                    {
+                        context.Meal.Add(new Meal
+                        {
+                            GuestId = g.Id,
+                            DishId = d.Id,
+                        }); ;
+                    }
+                });
+            });
+            await context.SaveChangesAsync();
         }
     }
 }

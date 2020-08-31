@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from "react";
 import {
-	withStyles,
 	Grid,
 	Typography,
 	Box,
 	CircularProgress,
+	makeStyles,
 } from "@material-ui/core";
+import PropTypes from "prop-types";
 
-const styles = (theme) => ({
+const useStyle = makeStyles((theme) => ({
 	root: {
-		display: "flex",
-		"& > * + *": {
-			marginLeft: theme.spacing(2),
-		},
+		flexGrow: 1,
 	},
-});
+	progressBox: {
+		top: 0,
+		left: 0,
+		bottom: 0,
+		right: 0,
+		position: "absolute",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+	},
+}));
 
 const calculateTimeLeft = (dateTo) => {
 	const intervalDifference = (diffMs) => {
@@ -37,22 +45,22 @@ const calculateTimeLeft = (dateTo) => {
 	if (differenceMs > 0) {
 		timeLeft = {
 			days: {
-				label: "дней",
+				label: "Дней",
 				left: calcDiff.days,
 				progress: 100 - (calcDiff.days * 100) / daysInYear,
 			},
 			hours: {
-				label: "часов",
+				label: "Часов",
 				left: calcDiff.hours,
 				progress: 100 - (calcDiff.hours * 100) / 24,
 			},
 			minutes: {
-				label: "минут",
+				label: "Минут",
 				left: calcDiff.minutes,
 				progress: 100 - (calcDiff.minutes * 100) / 60,
 			},
 			seconds: {
-				label: "секунд",
+				label: "Секунд",
 				left: calcDiff.seconds,
 				progress: 100 - (calcDiff.seconds * 100) / 60,
 			},
@@ -62,7 +70,8 @@ const calculateTimeLeft = (dateTo) => {
 	return timeLeft;
 };
 
-const Timer = ({ classes, ...props }) => {
+const Timer = (props) => {
+	const classes = useStyle();
 	const { eventDate } = props;
 
 	const refreshTime = () => calculateTimeLeft(eventDate);
@@ -77,54 +86,42 @@ const Timer = ({ classes, ...props }) => {
 		}, 1000);
 	});
 
+	if (isSuccess) {
+		return <Typography>Торжество уже началось!</Typography>;
+	}
+
 	return (
-		<div className='Timer'>
-			<Grid
-				container
-				justify='center'
-				spacing={3}
-				direction='row'
-				alignItems='center'>
-				{isSuccess && (
-					<Grid item xs={12} align='center'>
-						<Typography variant='h4' gutterBottom>
-							Торжество уже началось!
-						</Typography>
-					</Grid>
-				)}
-				{Object.keys(timeLeft).map((interval) => (
-					<Grid item xs={6} sm={2}>
-						<Box position='relative' display='inline-flex'>
-							<CircularProgress
-								variant='static'
-								size={100}
-								value={isSuccess ? 100 : timeLeft[interval].progress}
-							/>
-							<Box
-								top={0}
-								left={0}
-								bottom={0}
-								right={0}
-								position='absolute'
-								display='flex'
-								alignItems='center'
-								justifyContent='center'>
-								<Typography
-									variant='caption'
-									component='div'
-									color='textSecondary'
-									align='center'>
-									{isSuccess ? 0 : timeLeft[interval].left}
-									<p />
-									{timeLeft[interval].label}
-								</Typography>
-							</Box>
+		<Grid
+			container
+			direction='row'
+			justify='center'
+			alignItems='center'
+			spacing={2}>
+			{Object.keys(timeLeft).map((interval) => (
+				<Grid item xs={3} key={timeLeft[interval].label}>
+					<Typography align='center'>{timeLeft[interval].label}</Typography>
+					<Box position='relative' display='inline-flex'>
+						<CircularProgress
+							variant='static'
+							size={100}
+							value={isSuccess ? 100 : timeLeft[interval].progress}
+						/>
+						<Box className={classes.progressBox}>
+							<Typography>{timeLeft[interval].left}</Typography>
 						</Box>
-					</Grid>
-				))}
-			</Grid>
-		</div>
+					</Box>
+				</Grid>
+			))}
+		</Grid>
 	);
 };
 
-export default withStyles(styles)(Timer);
+Timer.propTypes = {
+	eventDate: PropTypes.string.isRequired,
+};
+
+Timer.defaultProps = {
+	eventDate: "2020-10-10",
+};
+
+export default Timer;

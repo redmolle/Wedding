@@ -7,28 +7,25 @@ using System.Text;
 
 namespace Models
 {
-    public class MenuItem
+    public class Meal
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [JsonProperty("id")]
         public Guid Id { get; set; }
 
-        [JsonProperty("itemId")]
-        public Guid ItemId { get; set; }
-
-        [ForeignKey("ItemId")]
-        [JsonProperty("item")]
-        public virtual Item Item { get; set; }
-
         [JsonProperty("guestId")]
         public Guid GuestId { get; set; }
+
+        [JsonProperty("dishId")]
+        public Guid DishId { get; set; }
 
         [ForeignKey("GuestId")]
         [JsonProperty("guest")]
         public virtual Guest Guest { get; set; }
 
-        [JsonProperty("isChoosed")]
-        public bool IsChoosed { get; set; }
+        [ForeignKey("DishId")]
+        [JsonProperty("dish")]
+        public virtual Dish Dish { get; set; }
     }
 }

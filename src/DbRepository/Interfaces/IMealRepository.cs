@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace DbRepository.Interfaces
 {
-    public interface IMenuRepository
+    public interface IMealRepository
     {
-        Task<bool> Choose(Guid id);
+        Task<IEnumerable<Meal>> GetMeals(Guid guestId);
+        Task CreateMeal(Meal meal);
+        Task DeleteMeal(Guid id);
     }
 }

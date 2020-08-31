@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace DbRepository.Repositories
 {
-    public class CategoryRepository : BaseRepository, ICategoryRepository
+    public class CategoryRepository : Repository, ICategoryRepository
     {
         public CategoryRepository(AppSettings settings, IRepositoryContextFactory contextFactory)
             : base(settings, contextFactory) { }
 
-        public async Task<IEnumerable<Category>> GetAll()
+        public async Task<IEnumerable<Category>> GetCategories()
         {
-            using (var context = this.CreateDbContext())
+            using (var context = CreateDbContext())
             {
-                return await context.Category.OrderBy(o => o.SortOrder).ToListAsync();
+                return await context.Category.ToListAsync();
             }
         }
     }

@@ -10,9 +10,9 @@ namespace Models
 
         public string ConnectionString { get; set; }
 
-        public List<Guest> Persons { get; set; }
+        public List<Guest> Guests { get; set; }
 
-        public List<Item> Items { get; set; }
+        public List<Dish> Dishes { get; set; }
 
         public List<Category> Categories { get; set; }
 

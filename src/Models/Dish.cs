@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Models
 {
-    public class Item
+    public class Dish
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -23,9 +23,5 @@ namespace Models
         [ForeignKey("CategoryId")]
         [JsonProperty("category")]
         public virtual Category Category { get; set; }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [JsonProperty("sortOrder")]
-        public int SortOrder { get; set; }
     }
 }

@@ -1,22 +1,79 @@
 import api from "../actions/api";
+import {reducers} from './reduxStore'
 
 export const GUEST_ACTION_TYPE = {
-	GET: "GUEST_GET",
-	CONFIRM_INVITE: "GUEST_CONFIRM_INVITE",
-	REFUSE_INVITE: "GUEST_REFUSE_INVITE",
-	CONFIRM_ZAGS: "GUEST_CONFIRM_ZAGS",
-	REFUSE_ZAGS: "GUEST_REFUSE_ZAGS",
+	GET: "GET_GUEST",
+	GET_ALL: "GET_ALL_GUESTS",
+	CREATE: "CREATE_GUEST",
+	UPDATE: "UPDATE_GUEST",
+	DELETE: "DELETE_GUEST",
+	CONFIRM_INVITE: "CONFIRM_INVITE",
+	REFUSE_INVITE: "REFUSE_INVITE",
+	CONFIRM_ZAGS: "CONFIRM_ZAGS",
+	REFUSE_ZAGS: "REFUSE_ZAGS",
 };
 
 export const actionCreators = {
 	get: (id) => (dispatch) => {
 		api
 			.Guest()
-			.get(id)
+			.getById(id)
 			.then((response) => {
 				dispatch({
 					type: GUEST_ACTION_TYPE.GET,
 					payload: response.data,
+				});
+			})
+			.catch((error) => console.log(error));
+	},
+
+	getAll: () => (dispatch) => {
+		api
+			.Guest()
+			.getAll()
+			.then((response) => {
+				dispatch({
+					type: GUEST_ACTION_TYPE.GET_ALL,
+					payload: response.data,
+				});
+			})
+			.catch((error) => console.log(error));
+	},
+
+	create: (guest) => (dispatch) => {
+		api
+			.Guest()
+			.create(guest)
+			.then((response) => {
+				dispatch({
+					type: GUEST_ACTION_TYPE.CREATE,
+					payload: guest,
+				});
+			})
+			.catch((error) => console.log(error));
+	},
+
+	update: (guest) => (dispatch) => {
+		api
+			.Guest()
+			.update(guest)
+			.then((response) => {
+				dispatch({
+					type: GUEST_ACTION_TYPE.UPDATE,
+					payload: guest,
+				});
+			})
+			.catch((error) => console.log(error));
+	},
+
+	delete: (id) => (dispatch) => {
+		api
+			.Guest()
+			.delete(id)
+			.then((response) => {
+				dispatch({
+					type: GUEST_ACTION_TYPE.DELETE,
+					payload: id,
 				});
 			})
 			.catch((error) => console.log(error));
@@ -49,7 +106,7 @@ export const actionCreators = {
 	confirmZAGS: (id) => (dispatch) => {
 		api
 			.Guest()
-			.confirmZags(id)
+			.confirmZAGS(id)
 			.then((response) => {
 				dispatch({
 					type: GUEST_ACTION_TYPE.CONFIRM_ZAGS,
@@ -61,7 +118,7 @@ export const actionCreators = {
 	refuseZAGS: (id) => (dispatch) => {
 		api
 			.Guest()
-			.refuseZags(id)
+			.refuseZAGS(id)
 			.then((response) => {
 				dispatch({
 					type: GUEST_ACTION_TYPE.REFUSE_ZAGS,
@@ -72,7 +129,15 @@ export const actionCreators = {
 };
 
 const initialState = {
-	guest: { id: "", menu: [], name: "", status: "" },
+	list: [],
+	data: {
+		id: "",
+		name: "",
+		message: "",
+		isConfirmedInvite: false,
+		isCanBeInZAGS: false,
+		isConfirmedZAGS: false,
+	},
 };
 
 export const reducer = (state = initialState, action) => {
@@ -80,7 +145,67 @@ export const reducer = (state = initialState, action) => {
 		case GUEST_ACTION_TYPE.GET:
 			return {
 				...state,
-				guest: action.payload,
+				data: action.payload,
+			};
+
+		case GUEST_ACTION_TYPE.GET_ALL:
+			return {
+				...state,
+				list: [...action.payload],
+			};
+
+		case GUEST_ACTION_TYPE.CREATE:
+			return {
+				...state,
+				data: action.payload,
+			};
+		case GUEST_ACTION_TYPE.UPDATE:
+			return {
+				...state,
+				data: action.payload,
+			};
+
+		case GUEST_ACTION_TYPE.DELETE:
+			return {
+				...state,
+				data: initialState.data,
+				list: [state.dishes.filter((d) => d.id !== action.payload)],
+			};
+
+		case GUEST_ACTION_TYPE.CONFIRM_INVITE:
+			return {
+				...state,
+				data: {
+					...state.data,
+					isConfirmedInvite: true,
+				},
+			};
+
+		case GUEST_ACTION_TYPE.REFUSE_INVITE:
+			return {
+				...state,
+				data: {
+					...state.data,
+					isConfirmedInvite: false,
+				},
+			};
+
+		case GUEST_ACTION_TYPE.CONFIRM_ZAGS:
+			return {
+				...state,
+				data: {
+					...state.data,
+					isConfirmedZAGS: true,
+				},
+			};
+
+		case GUEST_ACTION_TYPE.REFUSE_ZAGS:
+			return {
+				...state,
+				data: {
+					...state.data,
+					isConfirmedZAGS: false,
+				},
 			};
 
 		default:

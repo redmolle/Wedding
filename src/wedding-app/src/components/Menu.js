@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import * as Category from "../store/Category";
-import * as MenuActions from "../store/Menu";
+import * as CategoryActions from "../store/Category";
+import * as DishActions from "../store/Dish";
+import * as MealActions from "../store/Meal";
 import {
 	TableContainer,
 	Table,
@@ -9,33 +10,65 @@ import {
 	TableRow,
 	TableCell,
 	Checkbox,
-	withStyles,
+	makeStyles,
 	Typography,
 	TableHead,
 	Grid,
+	withStyles,
+	Paper,
+	Box,
+	ButtonGroup,
+	Button,
 } from "@material-ui/core";
 
-const styles = (theme) => ({
+const useStyle = makeStyles((theme) => ({
 	root: {
-		"& .MuiTableCell-head": {
-			fontSize: "1.25rem",
-		},
-		".MuiTableHead-root": {
-			width: "100%",
-		},
+		flexGrow: 1,
+		margin: theme.spacing(1),
+		width: "100%",
 	},
-});
+	paper: {
+		padding: theme.spacing(2),
+		textAlign: "center",
+		margin: theme.spacing(2),
+		marginBottom: theme.spacing(2),
+		color: theme.palette.text.secondary,
+	},
+	smMargin: {
+		margin: theme.spacing(1),
+	},
+	tableHead: {
+		fontSize: "1.75rem",
+	},
+	tableCell: {
+		fontSize: "60pt",
+	},
+	title: {
+		flex: "1 1 100%",
+	},
+}));
 
-const Menu = ({ classes, ...props }) => {
-	const [isLoaded, setIsLoaded] = useState(false);
+const CategoriedMenu = (props) => {
+	const classes = useStyle();
+	const { category, dishes } = props;
 	const [selected, setSelected] = React.useState([]);
+	const numSelected = selected.length;
+	const rowCount = dishes.length;
+	const handleSelectAllClick = (event) => {
+		if (event.target.checked) {
+			const newSelecteds = dishes.map((n) => n.id);
+			setSelected(newSelecteds);
+			return;
+		}
+		setSelected([]);
+	};
 
-	const handleSelect = (menuId) => {
-		const selectedIndex = selected.indexOf(menuId);
+	const handleClick = (event, id) => {
+		const selectedIndex = selected.indexOf(id);
 		let newSelected = [];
 
 		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, menuId);
+			newSelected = newSelected.concat(selected, id);
 		} else if (selectedIndex === 0) {
 			newSelected = newSelected.concat(selected.slice(1));
 		} else if (selectedIndex === selected.length - 1) {
@@ -46,126 +79,199 @@ const Menu = ({ classes, ...props }) => {
 				selected.slice(selectedIndex + 1)
 			);
 		}
-		
+
 		setSelected(newSelected);
-		props.chooseMeal(menuId);
 	};
 
-	const filterMenu = (categoryId) =>
-		props.menu.filter((f) => f.item.categoryId === categoryId);
-
-	const isSelected = (menuId) =>
-		selected.indexOf(menuId) !== -1 ||
-		props.menu.includes((f) => f.id === menuId);
-
-	if (!isLoaded && props.menu && props.menu.length > 0) {
-		props.getCategories();
-		setSelected(
-			props.menu.filter((f) => f.isChoosed === true).map((m) => m.id)
-		);
-		setIsLoaded(true);
-	}
+	const isSelected = (id) => selected.indexOf(id) !== -1;
 
 	return (
-		<Grid container justify='center'>
-			<Grid item xs={6} align='center'>
-				{props.menu && props.menu.length > 0 && (
-					<div className='Menu'>
-						{props.categories
-							.sort((a, b) => a.SortOrder > b.SortOrder)
-							.map((category, category_index) => {
-								const categoriedMenu = filterMenu(category.id);
-								const numSelected = categoriedMenu.filter((f) =>
-									isSelected(f.id)
-								).length;
-								const handleSelectAll = (event) => {
-									let menuIdSet = categoriedMenu.map((m) => m.id);
-									console.log(menuIdSet);
-									let newSelected = [];
-									if (event.target.checked) {
-										newSelected = newSelected.concat(
-											selected,
-											menuIdSet.filter((f) => !isSelected(f))
-										);
-									} else {
-										newSelected = selected.filter(
-											(f) => menuIdSet.indexOf(f) === -1
-										);
-									}
-									console.log(newSelected);
+		<TableContainer>
+			<Table
+				className={classes.table}
+				aria-labelledby='tableTitle'
+				aria-label='enhanced table'>
+				<TableHead>
+					<TableRow>
+						<TableCell padding='checkbox'>
+							<Checkbox
+								indeterminate={numSelected > 0 && numSelected < rowCount}
+								checked={rowCount > 0 && numSelected === rowCount}
+								onChange={handleSelectAllClick}
+								inputProps={{ "aria-label": "select all desserts" }}
+							/>
+						</TableCell>
+						<TableCell key={"name"} align={"left"} padding={"none"}>
+							{category.name}
+						</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{dishes
+						.sort((a, b) => {
+							return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+						})
+						.map((row, index) => {
+							const isDishSelected = isSelected(row.id);
+							return (
+								<TableRow
+									hover
+									onClick={(event) => handleClick(event, row.id)}
+									role='checkbox'
+									aria-checked={isDishSelected}
+									tabIndex={-1}
+									key={row.id}
+									selected={isDishSelected}>
+									<TableCell padding='checkbox'>
+										<Checkbox checked={isDishSelected} />
+									</TableCell>
+									<TableCell component='th' scope='row' padding='none'>
+										{row.name}
+									</TableCell>
+								</TableRow>
+							);
+						})}
+				</TableBody>
+			</Table>
+		</TableContainer>
+	);
+};
 
-									setSelected(newSelected);
-								};
+const Menu = (props) => {
+	const classes = useStyle();
+	const [selected, setSelected] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
 
-								return (
-									<TableContainer key={category.id}>
-										<Table>
-											<TableHead>
-												<TableRow>
-													<TableCell padding='checkbox'>
-														<Checkbox
-															checked={numSelected === categoriedMenu.length}
-															onChange={handleSelectAll}
-														/>
-													</TableCell>
-													<TableCell>{category.name}</TableCell>
-												</TableRow>
-											</TableHead>
-											<TableBody>
-												{categoriedMenu
-													.sort((a, b) =>
-														a.item.name > b.item.name
-															? 1
-															: b.item.name > a.item.name
-															? -1
-															: 0
-													)
-													.map((menuItem, menuItem_index) => {
-														const isItemSelected = isSelected(menuItem.id);
-														return (
-															<TableRow
-																hover
-																onClick={(event) => handleSelect(menuItem.id)}
-																role='checkbox'
-																tabIndex={-1}
-																key={menuItem.id}
-																selected={isItemSelected}>
-																<TableCell padding='checkbox'>
-																	<Checkbox checked={isItemSelected} />
-																</TableCell>
-																<TableCell
-																	component='th'
-																	id={menuItem.id}
-																	scope='row'
-																	padding='none'>
-																	{menuItem.item.name}
-																</TableCell>
-															</TableRow>
-														);
-													})}
-											</TableBody>
-										</Table>
-									</TableContainer>
-								);
-							})}
-					</div>
-				)}
-			</Grid>
+	const handleSubmit = (event) => {
+		event.preventDefault();
+	};
+
+	const handleClick = (event, id) => {
+		const selectedIndex = selected.indexOf(id);
+		let newSelected = [];
+
+		if (selectedIndex === -1) {
+			newSelected = newSelected.concat(selected, id);
+		} else if (selectedIndex === 0) {
+			newSelected = newSelected.concat(selected.slice(1));
+		} else if (selectedIndex === selected.length - 1) {
+			newSelected = newSelected.concat(selected.slice(0, -1));
+		} else if (selectedIndex > 0) {
+			newSelected = newSelected.concat(
+				selected.slice(0, selectedIndex),
+				selected.slice(selectedIndex + 1)
+			);
+		}
+
+		setSelected(newSelected);
+	};
+
+	const isSelected = (id) => selected.indexOf(id) !== -1;
+
+	useEffect(() => {
+		setIsLoading(true);
+		props.getCategories();
+		props.getDishes();
+		props.getMeals(props.guest.id);
+		if (props.meals && props.meals.list && props.meals.list.length > 0) {
+			setSelected(props.meals.list.map((m) => m.dishId));
+		}
+		setIsLoading(false);
+	}, [props.guest.id]);
+
+	return (
+		<Grid
+			container
+			// direction='column'
+			justify='center'
+			alignItems='center'
+			spacing={2}>
+			{props.categories.map((category, c_index) => {
+				const filteredDishes =
+					props.dishes.filter((f) => f.categoryId === category.id);
+
+				const handleSelectAllClick = (event) => {
+					let newSelected = [];
+					if (event.target.checked) {
+						newSelected = newSelected.concat(
+							selected,
+							filteredDishes.filter((f) => !isSelected(f.id)).map((m) => m.id)
+						);
+					} else {
+						newSelected = selected.filter((f) =>
+							!filteredDishes.map((m) => m.id).includes(f)
+						);
+					}
+					setSelected(newSelected);
+				};
+
+				const numSelected = selected.filter((f) =>
+					filteredDishes.map((m) => m.id).includes(f)
+				).length;
+				const rowCount = filteredDishes.length;
+
+				return (
+					<Grid item xs={6} sm={4} key={category.id}>
+						<TableContainer>
+							<Table className={classes.tableCell}>
+								<TableHead>
+									<TableRow className={classes.tableHead}>
+										<TableCell padding='checkbox' >
+											<Checkbox
+												indeterminate={
+													numSelected > 0 && numSelected < rowCount
+												}
+												checked={rowCount > 0 && numSelected === rowCount}
+												onChange={handleSelectAllClick}
+											/>
+										</TableCell>
+										<TableCell padding='none'>{category.name}</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{filteredDishes.map((dish, d_index) => {
+										const isDishSelected = isSelected(dish.id);
+										return (
+											<TableRow
+											className={classes.tableCell}
+												hover
+												onClick={(event) => handleClick(event, dish.id)}
+												role='checkbox'
+												aria-checked={isDishSelected}
+												tabIndex={-1}
+												key={dish.id}
+												selected={isDishSelected}>
+												<TableCell padding='checkbox'>
+													<Checkbox checked={isDishSelected} />
+												</TableCell>
+												<TableCell component='th' scope='row' padding='none'>
+													{dish.name}
+												</TableCell>
+											</TableRow>
+										);
+									})}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					</Grid>
+				);
+			})}
 		</Grid>
 	);
 };
 
 const mapStateToProps = (state) => ({
-	menu: state.guest.guest.menu,
-	categories: state.category.categories,
+	categories: state.category.list,
+	meals: state.meal.list,
+	dishes: state.dish.list,
+	guest: state.guest.data,
 });
 
 const mapActionToProps = {
-	getCategories: Category.actionCreators.getAll,
-	chooseMeal: MenuActions.actionCreators.choose,
+	getCategories: CategoryActions.actionCreators.getAll,
+	getDishes: DishActions.actionCreators.getAll,
+	chooseMeal: MealActions.actionCreators.choose,
+	getMeals: MealActions.actionCreators.getByGuest,
 };
 
-export default connect(
-	mapStateToProps,
-	mapActionToProps
-)(withStyles(styles)(Menu));
+export default connect(mapStateToProps, mapActionToProps)(Menu);
