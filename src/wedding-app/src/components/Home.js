@@ -1,51 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import * as GuestActions from "../store/Guest";
-import { Grid, Paper, makeStyles } from "@material-ui/core";
+import { Paper, makeStyles } from "@material-ui/core";
 import bg from "../background.png";
 import NotFound from "./NotFound";
 import Invite from "./Invite";
 
 const useStyle = makeStyles((theme) => ({
-	paper: {
-        backgroundImage: `url(${bg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center center",
+    
+    root: {
+		backgroundImage: `url(${bg})`,
+		backgroundSize: "cover",
+		backgroundPosition: "center center",
 		backgroundRepeat: "no-repeat",
-        margin: theme.spacing(2),
-        padding: theme.spacing(2)
-    }
-}))
+		margin: theme.spacing(2),
+        padding: theme.spacing(2),
+        minHeight:window.screen.height,
+        maxHeight: window.screen.height, overflow: 'auto',
+        width:'100%',
+        
+	},
+}));
 
 const Home = (props) => {
-    const classes = useStyle();
-	
-	const guestId = props.match.params.guestId;
+	const classes = useStyle();
 
-    useEffect(() => {
-            props.getGuest(guestId);
-	}, [guestId]);
-
-    return (
-        <Paper className={classes.paper}>
-            {props.guest && props.guest.id ? (
-                <Invite />
-            ) : (
-                <NotFound/>
-            )}
-        </Paper>
-    );
+	useEffect(() => {
+		props.getGuest(props.match.params.guestId);
+    }, []);
+    
+	return (
+		<Paper className={classes.root} overflow-x='hidden'>
+			{props.guest && props.guest.id ? <Invite /> : <NotFound />}
+		</Paper>
+	);
 };
 
 const mapStateToProps = (state) => ({
-	guest: state.guest.data,
+	guest: state.guest.guest,
 });
 
 const mapActionToProps = {
 	getGuest: GuestActions.actionCreators.get,
 };
 
-export default connect(
-	mapStateToProps,
-	mapActionToProps
-)(Home);
+export default connect(mapStateToProps, mapActionToProps)(Home);

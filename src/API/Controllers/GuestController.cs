@@ -25,18 +25,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetGuest(Guid id)
         {
-            try
-            {
-                return Ok(await _service.GetGuest(id));
-            }
-            catch(KeyNotFoundException)
-            {
-                return NotFound();
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            return Ok(await _service.GetGuest(id));
         }
 
         [Route("all")]
@@ -75,6 +64,21 @@ namespace API.Controllers
         public async Task<IActionResult> RefuseZAGS(Guid id)
         {
             await _service.ConfirmZags(id, false);
+            return Ok();
+        }
+
+        [Route("meal/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> GetMeal(Guid id)
+        {
+            return Ok(await _service.GetMeals(id));
+        }
+
+        [Route("meal/{id}")]
+        [HttpPost]
+        public async Task<IActionResult> ChooseMeal(Guid id, IEnumerable<Guid> dishesIdSet)
+        {
+            await _service.ChooseMeals(id, dishesIdSet.Select(s => new Dish { Id = s }));
             return Ok();
         }
     }

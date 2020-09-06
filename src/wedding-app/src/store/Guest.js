@@ -1,79 +1,24 @@
 import api from "../actions/api";
-import {reducers} from './reduxStore'
 
 export const GUEST_ACTION_TYPE = {
 	GET: "GET_GUEST",
-	GET_ALL: "GET_ALL_GUESTS",
-	CREATE: "CREATE_GUEST",
-	UPDATE: "UPDATE_GUEST",
-	DELETE: "DELETE_GUEST",
 	CONFIRM_INVITE: "CONFIRM_INVITE",
 	REFUSE_INVITE: "REFUSE_INVITE",
 	CONFIRM_ZAGS: "CONFIRM_ZAGS",
 	REFUSE_ZAGS: "REFUSE_ZAGS",
+	GET_MEAL: "GET_MEAL",
+	CHOOSE_MEAL: "CHOOSE_MEAL",
 };
 
 export const actionCreators = {
 	get: (id) => (dispatch) => {
 		api
 			.Guest()
-			.getById(id)
+			.get(id)
 			.then((response) => {
 				dispatch({
 					type: GUEST_ACTION_TYPE.GET,
 					payload: response.data,
-				});
-			})
-			.catch((error) => console.log(error));
-	},
-
-	getAll: () => (dispatch) => {
-		api
-			.Guest()
-			.getAll()
-			.then((response) => {
-				dispatch({
-					type: GUEST_ACTION_TYPE.GET_ALL,
-					payload: response.data,
-				});
-			})
-			.catch((error) => console.log(error));
-	},
-
-	create: (guest) => (dispatch) => {
-		api
-			.Guest()
-			.create(guest)
-			.then((response) => {
-				dispatch({
-					type: GUEST_ACTION_TYPE.CREATE,
-					payload: guest,
-				});
-			})
-			.catch((error) => console.log(error));
-	},
-
-	update: (guest) => (dispatch) => {
-		api
-			.Guest()
-			.update(guest)
-			.then((response) => {
-				dispatch({
-					type: GUEST_ACTION_TYPE.UPDATE,
-					payload: guest,
-				});
-			})
-			.catch((error) => console.log(error));
-	},
-
-	delete: (id) => (dispatch) => {
-		api
-			.Guest()
-			.delete(id)
-			.then((response) => {
-				dispatch({
-					type: GUEST_ACTION_TYPE.DELETE,
-					payload: id,
 				});
 			})
 			.catch((error) => console.log(error));
@@ -86,6 +31,7 @@ export const actionCreators = {
 			.then((response) => {
 				dispatch({
 					type: GUEST_ACTION_TYPE.CONFIRM_INVITE,
+					payload: id,
 				});
 			})
 			.catch((error) => console.log(error));
@@ -98,6 +44,7 @@ export const actionCreators = {
 			.then((response) => {
 				dispatch({
 					type: GUEST_ACTION_TYPE.REFUSE_INVITE,
+					payload: id,
 				});
 			})
 			.catch((error) => console.log(error));
@@ -110,6 +57,7 @@ export const actionCreators = {
 			.then((response) => {
 				dispatch({
 					type: GUEST_ACTION_TYPE.CONFIRM_ZAGS,
+					payload: id,
 				});
 			})
 			.catch((error) => console.log(error));
@@ -122,6 +70,33 @@ export const actionCreators = {
 			.then((response) => {
 				dispatch({
 					type: GUEST_ACTION_TYPE.REFUSE_ZAGS,
+					payload: id,
+				});
+			})
+			.catch((error) => console.log(error));
+	},
+
+	getMeal: (id) => (dispatch) => {
+		api
+			.Guest()
+			.getMeal(id)
+			.then((response) => {
+				dispatch({
+					type: GUEST_ACTION_TYPE.GET_MEAL,
+					payload: response.data,
+				});
+			})
+			.catch((error) => console.log(error));
+	},
+
+	chooseMeal: (id, dishes) => (dispatch) => {
+		console.log(dishes);
+		api
+			.Guest()
+			.chooseMeal(id, dishes)
+			.then((response) => {
+				dispatch({
+					type: GUEST_ACTION_TYPE.CHOOSE_MEAL,
 				});
 			})
 			.catch((error) => console.log(error));
@@ -129,8 +104,8 @@ export const actionCreators = {
 };
 
 const initialState = {
-	list: [],
-	data: {
+	meal: [],
+	guest: {
 		id: "",
 		name: "",
 		message: "",
@@ -145,38 +120,14 @@ export const reducer = (state = initialState, action) => {
 		case GUEST_ACTION_TYPE.GET:
 			return {
 				...state,
-				data: action.payload,
-			};
-
-		case GUEST_ACTION_TYPE.GET_ALL:
-			return {
-				...state,
-				list: [...action.payload],
-			};
-
-		case GUEST_ACTION_TYPE.CREATE:
-			return {
-				...state,
-				data: action.payload,
-			};
-		case GUEST_ACTION_TYPE.UPDATE:
-			return {
-				...state,
-				data: action.payload,
-			};
-
-		case GUEST_ACTION_TYPE.DELETE:
-			return {
-				...state,
-				data: initialState.data,
-				list: [state.dishes.filter((d) => d.id !== action.payload)],
+				guest: action.payload,
 			};
 
 		case GUEST_ACTION_TYPE.CONFIRM_INVITE:
 			return {
 				...state,
-				data: {
-					...state.data,
+				guest: {
+					...state.guest,
 					isConfirmedInvite: true,
 				},
 			};
@@ -184,8 +135,8 @@ export const reducer = (state = initialState, action) => {
 		case GUEST_ACTION_TYPE.REFUSE_INVITE:
 			return {
 				...state,
-				data: {
-					...state.data,
+				guest: {
+					...state.guest,
 					isConfirmedInvite: false,
 				},
 			};
@@ -193,8 +144,8 @@ export const reducer = (state = initialState, action) => {
 		case GUEST_ACTION_TYPE.CONFIRM_ZAGS:
 			return {
 				...state,
-				data: {
-					...state.data,
+				guest: {
+					...state.guest,
 					isConfirmedZAGS: true,
 				},
 			};
@@ -202,10 +153,16 @@ export const reducer = (state = initialState, action) => {
 		case GUEST_ACTION_TYPE.REFUSE_ZAGS:
 			return {
 				...state,
-				data: {
-					...state.data,
+				guest: {
+					...state.guest,
 					isConfirmedZAGS: false,
 				},
+			};
+
+		case GUEST_ACTION_TYPE.GET_MEAL:
+			return {
+				...state,
+				meal: action.payload,
 			};
 
 		default:

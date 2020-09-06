@@ -1,24 +1,9 @@
-import React, { useEffect } from "react";
-import { connect } from "react-redux";
-import * as GuestActions from "../store/Guest";
-import * as MealActions from "../store/Meal";
+import React from "react";
 import {
-	Grid,
-	Paper,
-	withStyles,
 	makeStyles,
-	Typography,
 	ButtonGroup,
 	Button,
-	Box,
 } from "@material-ui/core";
-import bg from "../background.png";
-import NotFound from "./NotFound";
-import Divider from "./Divider";
-import Timer from "./Timer";
-import Menu from "./Menu";
-import NavigationMap from "./NavigationMap";
-import { YMaps, Placemark, Map } from "react-yandex-maps";
 
 const useStyle = makeStyles((theme) => ({
 	root: {
@@ -31,45 +16,35 @@ const useStyle = makeStyles((theme) => ({
 
 const Confirmation = (props) => {
 	const classes = useStyle();
-	const handleInvite = (event) => {
-		if (!props.guest.isConfirmedInvite) {
-			props.confirmInvite(props.guest.id);
-		} else {
-			props.refuseInvite(props.guest.id);
-		}
-	};
-	const handleInviteZags = (event) => {
-		if (!props.guest.isConfirmedZAGS) {
-			props.confirmZAGS(props.guest.id);
-		} else {
-			props.refuseZAGS(props.guest.id);
-		}
-	};
+
+	const {
+		isInviteConfirmed,
+		isCanBeInZAGS,
+		isZAGSConfirmed,
+		onInvite,
+		onZAGSInvite,
+	} = props
 
 	return (
 		<ButtonGroup variant='contained' orientation='vertical'>
 			<Button
 				className={classes.smMargin}
-				color={props.guest.isConfirmedInvite ? "secondary" : "primary"}
-				onClick={(event) =>
-					handleInvite(event, !props.guest.isConfirmedInvite)
-				}>
-				{!props.guest.isConfirmedInvite ? (
+				color={isInviteConfirmed ? "secondary" : "primary"}
+				onClick={onInvite}>
+				{!isInviteConfirmed ? (
 					<div>Принять приглашение</div>
 				) : (
 					<div>Планы поменялись</div>
 				)}
 			</Button>
 
-			{props.guest.isCanBeInZAGS && (
+			{isCanBeInZAGS && (
 				<Button
 					className={classes.smMargin}
-					color={props.guest.isConfirmedZAGS ? "secondary" : "primary"}
-					disabled={!props.guest.isConfirmedInvite}
-					onClick={(event) =>
-						handleInviteZags(event, !props.guest.isConfirmedZAGS)
-					}>
-					{!props.guest.isConfirmedZAGS ? (
+					color={isZAGSConfirmed ? "secondary" : "primary"}
+					disabled={!isInviteConfirmed}
+					onClick={onZAGSInvite}>
+					{!isZAGSConfirmed ? (
 						<div>Принять приглашение в ЗАГС</div>
 					) : (
 						<div>Планы насчет ЗАГСа поменялись</div>
@@ -80,15 +55,4 @@ const Confirmation = (props) => {
 	);
 };
 
-const mapStateToProps = (state) => ({
-	guest: state.guest.data,
-});
-
-const mapActionToProps = {
-	confirmInvite: GuestActions.actionCreators.confirmInvite,
-	refuseInvite: GuestActions.actionCreators.refuseInvite,
-	confirmZAGS: GuestActions.actionCreators.confirmZAGS,
-	refuseZAGS: GuestActions.actionCreators.refuseZAGS,
-};
-
-export default connect(mapStateToProps, mapActionToProps)(Confirmation);
+export default Confirmation;

@@ -57,20 +57,19 @@ namespace API.Services.Implementation
         public async Task ChooseMeals(Guid id, IEnumerable<Dish> dishes)
         {
             await EnsureGuestExists(id);
-            var mealList = await GetMeals(id);
-            var dishList = await _menuService.GetDishes();
-            foreach (var meal in mealList.Where(m => !dishes.Any(d => d.Id == m.DishId)))
+            var meals = await GetMeals(id);
+            var dishesOriginal = await _menuService.GetDishes();
+            var toDelete = meals.Where(w => dishesOriginal.Any(a => a.Id == w.Id) && !dishes.Any(a => a.Id == w.DishId));
+            var toCreate = dishes.Where(w => !meals.Any(a => a.DishId == w.Id)).Select(s => new Meal { GuestId = id, DishId = s.Id });
+
+            foreach (var meal in toDelete)
             {
                 await _mealRepository.DeleteMeal(meal.Id);
             }
-            mealList = await GetMeals(id);
-            foreach (var dish in dishList.Where(d => !mealList.Any(m => m.DishId == d.Id)))
+
+            foreach (var meal in toCreate)
             {
-                await _mealRepository.CreateMeal(new Meal
-                {
-                    GuestId = id,
-                    DishId = dish.Id
-                });
+                await _mealRepository.CreateMeal(meal);
             }
         }
 

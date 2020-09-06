@@ -1,13 +1,7 @@
 import React from "react";
-import { Grid, Typography, makeStyles } from "@material-ui/core";
-
-const useStyle = makeStyles((theme) => ({
-	root: {},
-}));
+import { Grid, Typography } from "@material-ui/core";
 
 const NotFound = (props) => {
-	const classes = useStyle();
-
 	return (
 		<Grid container>
             <Grid item xs={12}>

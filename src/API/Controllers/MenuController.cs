@@ -14,23 +14,23 @@ namespace API.Controllers
     {
         public MenuController(IMenuService menuService)
         {
-            _menuService = menuService;
+            _service = menuService;
         }
 
-        private readonly IMenuService _menuService;
+        private readonly IMenuService _service;
 
         [Route("categories")]
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
-            return Ok(await _menuService.GetCategories());
+            return Ok(await _service.GetCategories());
         }
 
         [Route("dishes")]
         [HttpGet]
         public async Task<IActionResult> GetDishes()
         {
-            return Ok(await _menuService.GetDishes());
+            return Ok(await _service.GetDishes());
         }
     }
 }

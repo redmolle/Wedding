@@ -1,52 +1,25 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000/";
+const baseUrl = "http://localhost:5000/api/";
 
 export default {
-
-	Category(url = baseUrl + 'api/category/') {
+	Menu(url = baseUrl + "menu/") {
 		return {
-			getById: (id) => axios.get(url + id),
-			getAll: () => axios.get(url + 'all'),
-			create: (category) => axios.post(url, category),
-			update: (category) => axios.put(url, category),
-			delete: (id) => axios.delete(url + id)
-		}
+			categories: () => axios.get(url + "categories"),
+			dishes: () => axios.get(url + "dishes"),
+		};
 	},
 
-	Dish(url = baseUrl + 'api/dish/') {
+	Guest(url = baseUrl + "guest/") {
 		return {
-			getById: (id) => axios.get(url + id),
-			getAll: () => axios.get(url + 'all'),
-			create: (dish) => axios.post(url, dish),
-			update: (dish) => axios.put(url, dish),
-			delete: (id) => axios.delete(url + id)
-		}
-	},
-
-	Guest(url = baseUrl + 'api/guest/') {
-		return {
-			getById: (id) => axios.get(url + id),
-			getAll: () => axios.get(url + 'all'),
-			create: (guest) => axios.post(url, guest),
-			update: (guest) => axios.put(url, guest),
-			delete: (id) => axios.delete(url + id),
+			get: (id) => axios.get(url + id),
 			confirmInvite: (id) => axios.get(url + `invite/confirm/${id}`),
 			refuseInvite: (id) => axios.get(url + `invite/refuse/${id}`),
 			confirmZAGS: (id) => axios.get(url + `ZAGS/confirm/${id}`),
 			refuseZAGS: (id) => axios.get(url + `ZAGS/refuse/${id}`),
-		}
-	},
 
-	Meal(url = baseUrl + 'api/meal/') {
-		return {
-			getById: (id) => axios.get(url + id),
-			getByGuest: (guestId) => axios.get(url + `guest/${guestId}`),
-			getAll: () => axios.get(url + 'all'),
-			create: (meal) => axios.post(url, meal),
-			update: (meal) => axios.put(url, meal),
-			delete: (id) => axios.delete(url + id),
-			choose: (id, dishes) => axios.post(url + `choose/${id}`, dishes)
-		}
-	}
+			getMeal: (id) => axios.get(url + `meal/${id}`),
+			chooseMeal: (id, dishes) => axios.post(url + `meal/${id}`, dishes),
+		};
+	},
 };

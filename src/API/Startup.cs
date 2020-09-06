@@ -65,6 +65,8 @@ namespace API
                 app.UseDeveloperExceptionPage();
             }
 
+            app.ConfigureCustomExceptionMiddleware();
+
             //app.UseHttpsRedirection();
 
             app.UseRouting();
