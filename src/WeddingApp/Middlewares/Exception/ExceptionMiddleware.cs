@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Models;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using WeddingApp.Models;
 
 namespace WeddingApp.Middlewares.Exception
 {
@@ -35,7 +35,7 @@ namespace WeddingApp.Middlewares.Exception
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;
-            return context.Response.WriteAsync(new ErrorDetails()
+            return context.Response.WriteAsync(new Error()
             {
                 StatusCode = context.Response.StatusCode,
                 Message = exception.Message

@@ -45,7 +45,7 @@ const Confirmation = (props) => {
 					disabled={!isInviteConfirmed}
 					onClick={onZAGSInvite}>
 					{!isZAGSConfirmed ? (
-						<div>Принять приглашение в ЗАГС</div>
+						<div>Хочу в ЗАГС</div>
 					) : (
 						<div>Планы насчет ЗАГСа поменялись</div>
 					)}

@@ -43,7 +43,7 @@ const Timing = (props) => {
 		},
 		{
 			time: '17:20',
-			description: 'Регистрация в ЗАГСе*'
+			description: 'Регистрация в ЗАГСе *'
 		},
 		{
 			time: '18:30',

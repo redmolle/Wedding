@@ -1,21 +1,16 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DbRepository;
-using DbRepository.Interfaces;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Models;
+using WeddingApp.Data;
+using WeddingApp.Models;
 
 namespace WeddingApp
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
@@ -24,12 +19,15 @@ namespace WeddingApp
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var factory = services.GetRequiredService<IRepositoryContextFactory>();
-                var environment = services.GetService<IWebHostEnvironment>();
-                using (var context = factory.CreateDbContext(appSettings.ConnectionString))
+                try
                 {
-                    if (environment.IsDevelopment())
-                        await DbInitializer.Initialize(context, appSettings);
+                    var context = services.GetRequiredService<WeddingContext>();
+                    DbInitializer.Initialize(context, appSettings);
+                }
+                catch (Exception exp)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(exp, "An error occurred while seeding the database.");
                 }
             }
 

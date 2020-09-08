@@ -2,82 +2,132 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Models;
-using WeddingApp.Services.Interfaces;
+using WeddingApp.Services.Guest;
 
 namespace WeddingApp.Controllers
 {
-    [ApiController]
+    /// <summary>
+    /// Контроллер гостей.
+    /// </summary>
     [Route("api/[controller]")]
-    public class GuestController : Controller
+    [ApiController]
+    public class GuestController : ControllerBase
     {
+        /// <summary>
+        /// Сервис гостей.
+        /// </summary>
+        private IGuestService _service;
+
+        /// <summary>
+        /// Конструктор контроллера гостей.
+        /// </summary>
+        /// <param name="service"></param>
         public GuestController(IGuestService service)
         {
             _service = service;
         }
 
-        private IGuestService _service;
-
-        [Route("{id}")]
+        /// <summary>
+        /// Получить гостя.
+        /// </summary>
+        /// <param name="id">Id гостя.</param>
+        /// <returns>Гость.</returns>
         [HttpGet]
+        [Route("{id}")]
         public async Task<IActionResult> GetGuest(Guid id)
         {
             return Ok(await _service.GetGuest(id));
         }
 
-        [Route("all")]
+        /// <summary>
+        /// Получить гостей.
+        /// </summary>
+        /// <returns>Набор гостей.</returns>
         [HttpGet]
+        [Route("all")]
         public async Task<IActionResult> GetAllGuests()
         {
             return Ok(await _service.GetGuests());
         }
 
-        [Route("invite/confirm/{id}")]
+        /// <summary>
+        /// Подтвердить приглашение.
+        /// </summary>
+        /// <param name="id">Id гостя.</param>
+        /// <returns>Без контента.</returns>
         [HttpGet]
+        [Route("invite/confirm/{id}")]
         public async Task<IActionResult> ConfirmInvite(Guid id)
         {
             await _service.ConfirmInvite(id, true);
-            return Ok();
+            return NoContent();
         }
 
-        [Route("invite/refuse/{id}")]
+        /// <summary>
+        /// Отклонить приглашение.
+        /// </summary>
+        /// <param name="id">Id гостя.</param>
+        /// <returns>Без контента.</returns>
         [HttpGet]
+        [Route("invite/refuse/{id}")]
         public async Task<IActionResult> RefuseInvite(Guid id)
         {
             await _service.ConfirmInvite(id, false);
-            return Ok();
+            return NoContent();
         }
 
-        [Route("ZAGS/confirm/{id}")]
+        /// <summary>
+        /// Принять приглашение в ЗАГС.
+        /// </summary>
+        /// <param name="id">Id гостя.</param>
+        /// <returns>Без контента</returns>
         [HttpGet]
+        [Route("ZAGS/confirm/{id}")]
         public async Task<IActionResult> ConfirmZAGS(Guid id)
         {
             await _service.ConfirmZags(id, true);
-            return Ok();
+            return NoContent();
         }
 
-        [Route("ZAGS/refuse/{id}")]
+        /// <summary>
+        /// Отклонить приглашение в ЗАГС.
+        /// </summary>
+        /// <param name="id">Id гостя.</param>
+        /// <returns>Без контента.</returns>
         [HttpGet]
+        [Route("ZAGS/refuse/{id}")]
         public async Task<IActionResult> RefuseZAGS(Guid id)
         {
             await _service.ConfirmZags(id, false);
-            return Ok();
+            return NoContent();
         }
 
-        [Route("meal/{id}")]
+        /// <summary>
+        /// Получить набор выбранных блюд.
+        /// </summary>
+        /// <param name="id">Id гостя.</param>
+        /// <returns>Набор выбранных блюд.</returns>
         [HttpGet]
+        [Route("meal/{id}")]
         public async Task<IActionResult> GetMeal(Guid id)
         {
             return Ok(await _service.GetMeals(id));
         }
 
-        [Route("meal/{id}")]
+        /// <summary>
+        /// Выбрать блюда.
+        /// </summary>
+        /// <param name="id">Id гостя.</param>
+        /// <param name="dishesIdSet">Набор id блюд.</param>
+        /// <returns>Без контента.</returns>
         [HttpPost]
-        public async Task<IActionResult> ChooseMeal(Guid id, IEnumerable<Guid> dishesIdSet)
+        [Route("meal/{id}")]
+        public async Task<IActionResult> ChooseMeal(Guid id, ICollection<Guid> dishesIdSet)
         {
-            await _service.ChooseMeals(id, dishesIdSet.Select(s => new Dish { Id = s }));
-            return Ok();
+            await _service.ChooseMeals(id, dishesIdSet);
+            return NoContent();
         }
     }
 }
