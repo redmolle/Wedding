@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Services.Interfaces;
 using DbRepository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Models;
 
 namespace API.Controllers
 {
@@ -12,86 +14,72 @@ namespace API.Controllers
     [ApiController]
     public class GuestController : ControllerBase
     {
-        public GuestController(IGuestRepository guestRepository)
+        public GuestController(IGuestService service)
         {
-            _guestRepository = guestRepository;
+            _service = service;
         }
 
-        private IGuestRepository _guestRepository;
+        private IGuestService _service;
 
         [Route("{id}")]
         [HttpGet]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<IActionResult> GetGuest(Guid id)
         {
-            var guest = await _guestRepository.Get(id);
-            if (guest == null)
-            {
-                return NotFound(new HttpErrorMessage("Гость не найден!"));
-            }
-
-            return Ok(guest);
+            return Ok(await _service.GetGuest(id));
         }
 
-        [Route("confirmInvite/{id}")]
+        [Route("all")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllGuests()
+        {
+            return Ok(await _service.GetGuests());
+        }
+
+        [Route("invite/confirm/{id}")]
         [HttpGet]
         public async Task<IActionResult> ConfirmInvite(Guid id)
         {
-            var isUpdated = await ConfirmInvite(id, true);
-            if (!isUpdated)
-            {
-                return BadRequest(new HttpErrorMessage("Ошибка при подтвеждении"));
-            }
-            return NoContent();
+            await _service.ConfirmInvite(id, true);
+            return Ok();
         }
 
-        [Route("refuseInvite/{id}")]
+        [Route("invite/refuse/{id}")]
         [HttpGet]
         public async Task<IActionResult> RefuseInvite(Guid id)
         {
-            var isUpdated = await ConfirmInvite(id, false);
-            if (!isUpdated)
-            {
-                return BadRequest(new HttpErrorMessage("Ошибка при отклонении"));
-            }
-            return NoContent();
+            await _service.ConfirmInvite(id, false);
+            return Ok();
         }
 
-        [Route("confirmZAGS/{id}")]
+        [Route("ZAGS/confirm/{id}")]
         [HttpGet]
         public async Task<IActionResult> ConfirmZAGS(Guid id)
         {
-            var isUpdated = await _guestRepository.ConfirmZAGS(id, true);
-            if (!isUpdated)
-            {
-                return BadRequest(new HttpErrorMessage("Ошибка при подтвеждении"));
-            }
-            return NoContent();
+            await _service.ConfirmZags(id, true);
+            return Ok();
         }
 
-        [Route("refuseZAGS/{id}")]
+        [Route("ZAGS/refuse/{id}")]
         [HttpGet]
         public async Task<IActionResult> RefuseZAGS(Guid id)
         {
-            var isUpdated = await _guestRepository.ConfirmZAGS(id, false);
-            if (!isUpdated)
-            {
-                return BadRequest(new HttpErrorMessage("Ошибка при подтвеждении"));
-            }
-            return NoContent();
+            await _service.ConfirmZags(id, false);
+            return Ok();
         }
 
-
-        private async Task<bool> ConfirmInvite(Guid id, bool isConfirmed)
+        [Route("meal/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> GetMeal(Guid id)
         {
-            var isUpdated = await _guestRepository.ConfirmInvite(id, isConfirmed);
-
-            return !isUpdated ? false : true;
+            return Ok(await _service.GetMeals(id));
         }
-        private async Task<bool> ConfirmZAGS(Guid id, bool isConfirmed)
-        {
-            var isUpdated = await _guestRepository.ConfirmZAGS(id, isConfirmed);
 
-            return !isUpdated ? false : true;
+        [Route("meal/{id}")]
+        [HttpPost]
+        public async Task<IActionResult> ChooseMeal(Guid id, IEnumerable<Guid> dishesIdSet)
+        {
+            await _service.ChooseMeals(id, dishesIdSet.Select(s => new Dish { Id = s }));
+            return Ok();
         }
     }
 }

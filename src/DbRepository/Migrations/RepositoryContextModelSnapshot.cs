@@ -38,39 +38,7 @@ namespace DbRepository.Migrations
                     b.ToTable("Category");
                 });
 
-            modelBuilder.Entity("Models.Guest", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FullName")
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsCanBeInZAGS")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsConfirmedZAGS")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Guest");
-                });
-
-            modelBuilder.Entity("Models.Item", b =>
+            modelBuilder.Entity("Models.Dish", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -82,43 +50,62 @@ namespace DbRepository.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int>("SortOrder")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Item");
+                    b.ToTable("Dish");
                 });
 
-            modelBuilder.Entity("Models.MenuItem", b =>
+            modelBuilder.Entity("Models.Guest", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("GuestId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsChoosed")
+                    b.Property<bool>("IsCanBeInZAGS")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("ItemId")
+                    b.Property<bool>("IsConfirmedIvite")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsConfirmedZAGS")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Guest");
+                });
+
+            modelBuilder.Entity("Models.Meal", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DishId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GuestId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GuestId");
+                    b.HasIndex("DishId");
 
-                    b.HasIndex("ItemId");
+                    b.HasIndex("GuestId")
+                        .IsUnique();
 
-                    b.ToTable("Menu");
+                    b.ToTable("Meal");
                 });
 
-            modelBuilder.Entity("Models.Item", b =>
+            modelBuilder.Entity("Models.Dish", b =>
                 {
                     b.HasOne("Models.Category", "Category")
                         .WithMany()
@@ -127,17 +114,17 @@ namespace DbRepository.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Models.MenuItem", b =>
+            modelBuilder.Entity("Models.Meal", b =>
                 {
-                    b.HasOne("Models.Guest", "Guest")
-                        .WithMany("Menu")
-                        .HasForeignKey("GuestId")
+                    b.HasOne("Models.Dish", "Dish")
+                        .WithMany()
+                        .HasForeignKey("DishId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
+                    b.HasOne("Models.Guest", "Guest")
+                        .WithOne("Meal")
+                        .HasForeignKey("Models.Meal", "GuestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

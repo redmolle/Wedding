@@ -28,7 +28,9 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "wedding-app", "wedding-app\
 		SlnRelativePath = "wedding-app\"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{4B8F824C-7390-4F2B-AC6F-7D12D2DA63B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{4B8F824C-7390-4F2B-AC6F-7D12D2DA63B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeddingApp", "WeddingApp\WeddingApp.csproj", "{A8D7C494-74F5-49C1-9750-29CBCB80B08E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +54,10 @@ Global
 		{4B8F824C-7390-4F2B-AC6F-7D12D2DA63B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B8F824C-7390-4F2B-AC6F-7D12D2DA63B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B8F824C-7390-4F2B-AC6F-7D12D2DA63B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8D7C494-74F5-49C1-9750-29CBCB80B08E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8D7C494-74F5-49C1-9750-29CBCB80B08E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8D7C494-74F5-49C1-9750-29CBCB80B08E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8D7C494-74F5-49C1-9750-29CBCB80B08E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

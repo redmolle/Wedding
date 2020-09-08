@@ -8,6 +8,6 @@ namespace DbRepository.Interfaces
 {
     public interface ICategoryRepository
     {
-        Task<IEnumerable<Category>> GetAll();
+        Task<IEnumerable<Category>> GetCategories();
     }
 }

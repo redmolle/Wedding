@@ -17,17 +17,11 @@ namespace Models
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("fullName")]
-        public string FullName { get; set; }
+        [JsonProperty("message")]
+        public string Message { get; set; }
 
-        [JsonProperty("status")]
-        public string Status { get; set; }
-
-        [JsonProperty("description")]
-        public string Description { get; set; }
-
-        [JsonProperty("isConfirmed")]
-        public bool IsConfirmed { get; set; }
+        [JsonProperty("isConfirmedInvite")]
+        public bool IsConfirmedIvite { get; set; }
 
         [JsonProperty("isCanBeInZAGS")]
         public bool IsCanBeInZAGS { get; set; }
@@ -35,7 +29,7 @@ namespace Models
         [JsonProperty("isConfirmedZAGS")]
         public bool IsConfirmedZAGS { get; set; }
 
-        [JsonProperty("menu")]
-        public virtual ICollection<MenuItem> Menu { get; set; }
+        [JsonProperty("meal")]
+        public virtual Meal Meal { get; set; }
     }
 }

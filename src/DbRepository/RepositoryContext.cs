@@ -11,9 +11,9 @@ namespace DbRepository
 
         public DbSet<Guest> Guest { get; set; }
 
-        public DbSet<MenuItem> Menu { get; set; }
+        public DbSet<Meal> Meal { get; set; }
 
-        public DbSet<Item> Item { get; set; }
+        public DbSet<Dish> Dish { get; set; }
 
         public DbSet<Category> Category { get; set; }
     }

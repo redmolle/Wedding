@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DbRepository.Interfaces;
+using API.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,25 +12,25 @@ namespace API.Controllers
     [ApiController]
     public class MenuController : ControllerBase
     {
-        public MenuController(IMenuRepository menuRepository)
+        public MenuController(IMenuService menuService)
         {
-            _menuRepository = menuRepository;
+            _service = menuService;
         }
 
-        private IMenuRepository _menuRepository;
+        private readonly IMenuService _service;
 
+        [Route("categories")]
         [HttpGet]
-        [Route("choose/{id}")]
-        [HttpGet]
-        public async Task<IActionResult> ChooseMenu(Guid id)
+        public async Task<IActionResult> GetCategories()
         {
-            var isChoosed = await _menuRepository.Choose(id);
-            if (!isChoosed)
-            {
-                return NotFound(new HttpErrorMessage("Меню не найдено!"));
-            }
+            return Ok(await _service.GetCategories());
+        }
 
-            return NoContent();
+        [Route("dishes")]
+        [HttpGet]
+        public async Task<IActionResult> GetDishes()
+        {
+            return Ok(await _service.GetDishes());
         }
     }
 }

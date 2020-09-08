@@ -8,10 +8,9 @@ namespace DbRepository.Interfaces
 {
     public interface IGuestRepository
     {
-        Task<Guest> Get(Guid id);
-
-        Task<bool> ConfirmInvite(Guid id, bool? isConfirmed);
-
-        Task<bool> ConfirmZAGS(Guid id, bool? isConfirmed);
+        Task AddGuest(Guest guest);
+        Task<Guest> GetGuest(Guid id);
+        Task<IEnumerable<Guest>> GetGuests();
+        Task UpdateGuest(Guest guest);
     }
 }
