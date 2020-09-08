@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000/api/";
+const baseUrl = "http://192.168.0.111:5000/api/";
 
 export default {
 	Menu(url = baseUrl + "menu/") {

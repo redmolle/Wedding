@@ -58,8 +58,7 @@ namespace API.Services.Implementation
         {
             await EnsureGuestExists(id);
             var meals = await GetMeals(id);
-            var dishesOriginal = await _menuService.GetDishes();
-            var toDelete = meals.Where(w => dishesOriginal.Any(a => a.Id == w.Id) && !dishes.Any(a => a.Id == w.DishId));
+            var toDelete = meals.Where(w => !dishes.Any(a => a.Id == w.DishId));
             var toCreate = dishes.Where(w => !meals.Any(a => a.DishId == w.Id)).Select(s => new Meal { GuestId = id, DishId = s.Id });
 
             foreach (var meal in toDelete)

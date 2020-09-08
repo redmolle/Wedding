@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,6 +40,7 @@ namespace API
                     {
                         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                     });
+            services.AddMemoryCache();
 
             services.AddScoped<IRepositoryContextFactory, RepositoryContextFactory>();
             services.AddScoped<ICategoryRepository>(provider => new CategoryRepository(AppSettings, provider.GetService<IRepositoryContextFactory>()));
@@ -50,6 +52,10 @@ namespace API
             services.AddHttpClient();
 
             services.AddCors();
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "wedding-app/build";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,6 +70,20 @@ namespace API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSpaStaticFiles();
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "wedding-app";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
+            });
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.ConfigureCustomExceptionMiddleware();
 
