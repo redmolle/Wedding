@@ -13,12 +13,12 @@ namespace WeddingApp.Services.Menu
         /// Получить все категории блюд.
         /// </summary>
         /// <returns>Набор категорий блюд.</returns>
-        Task<ICollection<Category>> GetCategories();
+        Task<IEnumerable<Category>> GetCategories();
 
         /// <summary>
         /// Получить все блюда.
         /// </summary>
         /// <returns>Набор блюд.</returns>
-        Task<ICollection<Dish>> GetDishes();
+        Task<IEnumerable<Dish>> GetDishes();
     }
 }

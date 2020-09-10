@@ -30,7 +30,7 @@ namespace WeddingApp.Services.Menu
         /// Получить все категории блюд.
         /// </summary>
         /// <returns>Набор категорий блюд.</returns>
-        public async Task<ICollection<Category>> GetCategories()
+        public async Task<IEnumerable<Category>> GetCategories()
         {
             var categories = _context.Category.OrderBy(c => c.SortOrder).AsNoTracking();
             return await categories.ToListAsync();
@@ -40,7 +40,7 @@ namespace WeddingApp.Services.Menu
         /// Получить все блюда.
         /// </summary>
         /// <returns>Набор блюд.</returns>
-        public async Task<ICollection<Dish>> GetDishes()
+        public async Task<IEnumerable<Dish>> GetDishes()
         {
             var dishes = _context.Dish.OrderBy(d => d.Name).AsNoTracking();
             return await dishes.ToListAsync();

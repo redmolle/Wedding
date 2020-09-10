@@ -34,7 +34,7 @@ namespace WeddingApp.Services.Guest
         /// <param name="id">Id гостя.</param>
         /// <param name="dishes">Набор блюд.</param>
         /// <returns>Таск.</returns>
-        public async Task ChooseMeals(Guid id, ICollection<Guid> dishes)
+        public async Task ChooseMeals(Guid id, IEnumerable<Guid> dishes)
         {
             await EnsureGuestExists(id);
             var meals = await GetMeals(id);
@@ -105,7 +105,7 @@ namespace WeddingApp.Services.Guest
         /// Получить всех гостей.
         /// </summary>
         /// <returns>Набор гостей.</returns>
-        public async Task<ICollection<Models.Guest>> GetGuests()
+        public async Task<IEnumerable<Models.Guest>> GetGuests()
         {
             return await _context.Guest.AsNoTracking().ToListAsync();
         }
@@ -115,7 +115,7 @@ namespace WeddingApp.Services.Guest
         /// </summary>
         /// <param name="id">Id гостя.</param>
         /// <returns>Набор выбранных блюд.</returns>
-        public async Task<ICollection<Meal>> GetMeals(Guid id)
+        public async Task<IEnumerable<Meal>> GetMeals(Guid id)
         {
             await EnsureGuestExists(id);
             var meals = _context.Meal.AsNoTracking().Where(m => m.GuestId == id);

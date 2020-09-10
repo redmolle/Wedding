@@ -16,7 +16,7 @@ namespace WeddingApp.Services.Guest
         /// <param name="id">Id гостя.</param>
         /// <param name="dishes">Набор блюд.</param>
         /// <returns>Таск.</returns>
-        Task ChooseMeals(Guid id, ICollection<Guid> dishes);
+        Task ChooseMeals(Guid id, IEnumerable<Guid> dishes);
 
         /// <summary>
         /// Принять/отклонить приглашение.
@@ -52,13 +52,13 @@ namespace WeddingApp.Services.Guest
         /// Получить всех гостей.
         /// </summary>
         /// <returns>Набор гостей.</returns>
-        Task<ICollection<Models.Guest>> GetGuests();
+        Task<IEnumerable<Models.Guest>> GetGuests();
 
         /// <summary>
         /// Получить набор выбранных блюд гостя.
         /// </summary>
         /// <param name="id">Id гостя.</param>
         /// <returns>Набор выбранных блюд.</returns>
-        Task<ICollection<Meal>> GetMeals(Guid id);
+        Task<IEnumerable<Meal>> GetMeals(Guid id);
     }
 }

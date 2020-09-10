@@ -124,7 +124,7 @@ namespace WeddingApp.Controllers
         /// <returns>Без контента.</returns>
         [HttpPost]
         [Route("meal/{id}")]
-        public async Task<IActionResult> ChooseMeal(Guid id, ICollection<Guid> dishesIdSet)
+        public async Task<IActionResult> ChooseMeal(Guid id, IEnumerable<Guid> dishesIdSet)
         {
             await _service.ChooseMeals(id, dishesIdSet);
             return NoContent();
